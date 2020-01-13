@@ -48,7 +48,7 @@ class BotFernandoController extends Controller
                 }
             }
 
-            if ($this->inString($request->url, 'view_blog') && $flagUserConnect) {
+            if ($this->inString($request->url, 'view_blogDetail') && $flagUserConnect) {
                 $t = $scp->voteBlog($request->url, 10);
                 if ($this->inString($t, 'Rating')) {
                     $flagVoteBlog = true;
