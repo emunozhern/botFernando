@@ -28,7 +28,7 @@ class BotFernandoController extends Controller
             $flagCreatedBlog = false;
             $flagDeletedBlog = false;
 
-            $c = $scp->authenticateLogin('FernandoNR', 'FernandoNR');
+            $c = $scp->authenticateLogin($request->username, $request->passwd);
             if ($this->inString($c, 'Cerrar la sesión')) {
                 $flagUserConnect = true;
             }
