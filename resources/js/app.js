@@ -4,32 +4,37 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("startBot").addEventListener("click", function(e) {
         e.preventDefault();
 
-        urls = document.querySelector("#urls").value;
-        urls = urls.split("\n");
-
         user = document.querySelector("#users").value;
         user = user.split("\n");
 
+        urls = document.querySelector("#urls").value;
+        urls = urls.split("\n");
+
         disabledUrlsAndUsers();
 
-        urls.forEach(url => {
-            randomUser = user[Math.floor(Math.random() * user.length)];
-            username = randomUser.split(":")[0];
-            passwd = randomUser.split(":")[1];
+        user.forEach(uuser => {
+            userSplit = uuser.split(":");
 
-            axios
-                .post("/", {
-                    url: url,
-                    username: username,
-                    passwd: passwd
-                })
-                .then(function(response) {
-                    console.log(response.data);
-                    allRw(response.data);
-                })
-                .catch(function(error) {
-                    console.log(error);
-                });
+            console.log(userSplit);
+
+            username = userSplit[0];
+            passwd = userSplit[1];
+
+            urls.forEach(url => {
+                axios
+                    .post("/", {
+                        url: url,
+                        username: username,
+                        passwd: passwd
+                    })
+                    .then(function(response) {
+                        console.log(response.data);
+                        allRw(response.data);
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            });
         });
     });
 

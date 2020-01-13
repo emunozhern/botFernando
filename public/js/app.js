@@ -37081,24 +37081,27 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("startBot").addEventListener("click", function (e) {
     e.preventDefault();
-    urls = document.querySelector("#urls").value;
-    urls = urls.split("\n");
     user = document.querySelector("#users").value;
     user = user.split("\n");
+    urls = document.querySelector("#urls").value;
+    urls = urls.split("\n");
     disabledUrlsAndUsers();
-    urls.forEach(function (url) {
-      randomUser = user[Math.floor(Math.random() * user.length)];
-      username = randomUser.split(":")[0];
-      passwd = randomUser.split(":")[1];
-      axios.post("/", {
-        url: url,
-        username: username,
-        passwd: passwd
-      }).then(function (response) {
-        console.log(response.data);
-        allRw(response.data);
-      })["catch"](function (error) {
-        console.log(error);
+    user.forEach(function (uuser) {
+      userSplit = uuser.split(":");
+      console.log(userSplit);
+      username = userSplit[0];
+      passwd = userSplit[1];
+      urls.forEach(function (url) {
+        axios.post("/", {
+          url: url,
+          username: username,
+          passwd: passwd
+        }).then(function (response) {
+          console.log(response.data);
+          allRw(response.data);
+        })["catch"](function (error) {
+          console.log(error);
+        });
       });
     });
   });

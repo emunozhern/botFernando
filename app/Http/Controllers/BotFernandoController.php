@@ -10,10 +10,11 @@ class BotFernandoController extends Controller
 {
     public function index(Request $request)
     {
-        $message = "";
-        $scp = new Scraping();
 
         if ($request->ajax()) {
+            $message = "";
+            $scp = new Scraping();
+
             $flagUserConnect = false;
             $flagVoteProfile = false;
             $flagVoteView = false;
@@ -26,7 +27,6 @@ class BotFernandoController extends Controller
 
             if (strpos($request->url, 'view_profile') !== false && $flagUserConnect) {
                 $t = $scp->voteProfile($request->url, 10);
-
                 if (strpos($t, 'Rating') !== false) {
                     $flagVoteProfile = true;
                 }
@@ -38,7 +38,6 @@ class BotFernandoController extends Controller
                 if (strpos($t, 'Rating') !== false) {
                     $flagVoteView = true;
                 }
-
             }
 
             if (strpos($request->url, 'view_blogDetail') !== false && $flagUserConnect) {
