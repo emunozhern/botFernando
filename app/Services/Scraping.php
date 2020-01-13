@@ -90,4 +90,37 @@ class Scraping
         return $this->handlerCurl->post($url, $postField, true);
     }
 
+    public function createBlog()
+    {
+        $url = 'http://www.aztecasecreto.com/net/blog/blog.aspx';
+
+        $extraField = [
+            'ctl00$oCPH1$tabControl$ctl00$txtTitle' => 'holaaaa este es mi primer post',
+            'ctl00$oCPH1$tabControl$ctl00$txtBody' => 'holaaaa este es mi primer post',
+        ];
+
+        $postField = $this->showPageAndParserForm($url);
+
+        $postField = array_merge($postField, $extraField);
+        return $this->handlerCurl->post($url, $postField);
+    }
+
+    public function deleteBlog()
+    {
+        $url = 'http://www.aztecasecreto.com/net/blog/view_blog.aspx';
+
+        $response = $this->handlerCurl->get($url);
+
+        $htmlDomParser = HtmlDomParser::str_get_html($response);
+        $linksDelete = "";
+
+        foreach ($htmlDomParser->find('td[class="SCBlogLinks"] a') as $key => $value) {
+            if (strpos($value->href, 'deleteBlog') !== false) {
+                $linksDelete = $this->handlerCurl->get("http://www.aztecasecreto.com/net/blog/{$value->href}");
+            }
+        }
+
+        return $linksDelete;
+    }
+
 }

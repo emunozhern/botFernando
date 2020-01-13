@@ -54,6 +54,8 @@ document.addEventListener("DOMContentLoaded", function() {
             data.isUserAuth &&
             !data.isVoteView &&
             !data.isVoteProfile &&
+            !data.isCreatedBlog &&
+            !data.isDeletedBlog &&
             !data.isVoteBlog
         ) {
             html =
@@ -68,6 +70,8 @@ document.addEventListener("DOMContentLoaded", function() {
             !data.isUserAuth &&
             !data.isVoteView &&
             !data.isVoteProfile &&
+            !data.isCreatedBlog &&
+            !data.isDeletedBlog &&
             !data.isVoteBlog
         ) {
             html =
@@ -76,6 +80,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 "</strong> no pudo iniciar sesion</td></tr>";
             insertHTML(html);
             return;
+        }
+
+        if (data.isCreatedBlog) {
+            html =
+                '<tr> <td><span class="badge badge-success">Crear Blog</span> <strong>' +
+                data.username +
+                "</strong> se ha creado un blog exito</td></tr>";
+            insertHTML(html);
+
+            if (data.isDeletedBlog) {
+                html =
+                    '<tr> <td><span class="badge badge-success">Borrado Blog</span> <strong>' +
+                    data.username +
+                    "</strong> se han eliminado todas las entradas</td></tr>";
+                insertHTML(html);
+                return;
+            }
         }
 
         if (data.isVoteView) {
