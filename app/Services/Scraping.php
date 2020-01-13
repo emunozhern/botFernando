@@ -75,4 +75,19 @@ class Scraping
         return $this->handlerCurl->post($url, $postField, true);
     }
 
+    public function voteBlog($url, $starRate)
+    {
+        $extraField = [
+            'ctl00$sciptManagerMaster' => 'ctl00$oCPH1$tabControl$ctl00$CTRL_rating$pnlUpdateRating|ctl00$oCPH1$tabControl$ctl00$CTRL_rating$btnRating',
+            '__ASYNCPOST' => true,
+            'ctl00$oCPH1$tabControl$ctl00$CTRL_rating$hdnStarRate' => $starRate,
+        ];
+
+        $postField = $this->showPageAndParserForm($url);
+
+        $postField = array_merge($postField, $extraField);
+
+        return $this->handlerCurl->post($url, $postField, true);
+    }
+
 }

@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         disabledUrlsAndUsers();
 
-        urls.forEach((url, i) => {
+        urls.forEach(url => {
             randomUser = user[Math.floor(Math.random() * user.length)];
             username = randomUser.split(":")[0];
             passwd = randomUser.split(":")[1];
@@ -25,9 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
                 .then(function(response) {
                     console.log(response.data);
-                    isUserAuth(response.data);
-                    isVoteProfile(response.data);
-                    isVoteProfile(response.data);
+                    allRw(response.data);
                 })
                 .catch(function(error) {
                     console.log(error);
@@ -40,80 +38,106 @@ document.addEventListener("DOMContentLoaded", function() {
         enabledUrlsAndUsers();
     });
 
-    function isUserAuth(data) {
-        if (data.isUserAuth) {
-            document
-                .querySelector("#debugLog")
-                .insertAdjacentHTML(
-                    "afterend",
-                    '<tr> <td><span class="badge badge-success">Conectado</span> <strong>' +
-                        data.username +
-                        "</strong> inicio sesion con exito</td></tr>"
-                );
+    function insertHTML(html) {
+        document
+            .querySelector("#debugLog")
+            .insertAdjacentHTML("afterend", html);
+    }
+
+    function allRw(data) {
+        if (
+            data.isUserAuth &&
+            !data.isVoteView &&
+            !data.isVoteProfile &&
+            !data.isVoteBlog
+        ) {
+            html =
+                '<tr> <td><span class="badge badge-success">Conectado</span> <strong>' +
+                data.username +
+                "</strong> inicio sesion con exito</td></tr>";
+            insertHTML(html);
             return;
         }
 
-        document
-            .querySelector("#debugLog")
-            .insertAdjacentHTML(
-                "afterend",
+        if (
+            !data.isUserAuth &&
+            !data.isVoteView &&
+            !data.isVoteProfile &&
+            !data.isVoteBlog
+        ) {
+            html =
                 '<tr><td><span class="badge badge-danger">Conectado</span> <strong>' +
-                    data.username +
-                    "</strong> no pudo iniciar sesion</td></tr>"
-            );
-        return;
-    }
-    function isVoteView(data) {
-        if (data.isVoteProfile && !data.isVoteView) {
-            document
-                .querySelector("#debugLog")
-                .insertAdjacentHTML(
-                    "afterend",
-                    '<tr> <td><span class="badge badge-success">Voto Perfil</span> <strong>' +
-                        data.username +
-                        "</strong> voto en la url " +
-                        data.url +
-                        "</td></tr>"
-                );
+                data.username +
+                "</strong> no pudo iniciar sesion</td></tr>";
+            insertHTML(html);
             return;
         }
 
-        document
-            .querySelector("#debugLog")
-            .insertAdjacentHTML(
-                "afterend",
-                '<tr><td><span class="badge badge-danger">Voto Perfil</span> <strong>' +
-                    data.username +
-                    "</strong> no pudo votar en la url " +
-                    data.url +
-                    "</td></tr>"
-            );
-    }
-    function isVoteProfile(data) {
-        if (!data.isVoteProfile && data.isVoteView) {
-            document
-                .querySelector("#debugLog")
-                .insertAdjacentHTML(
-                    "afterend",
-                    '<tr> <td><span class="badge badge-success">Voto Imagen</span> <strong>' +
-                        data.username +
-                        "</strong> voto en la url " +
-                        data.url +
-                        "</td></tr>"
-                );
+        if (data.isVoteView) {
+            html =
+                '<tr> <td><span class="badge badge-success">Voto Imagen</span> <strong>' +
+                data.username +
+                "</strong> voto en la url " +
+                data.url +
+                "</td></tr>";
+            insertHTML(html);
             return;
         }
 
-        document
-            .querySelector("#debugLog")
-            .insertAdjacentHTML(
-                "afterend",
+        if (!data.isVoteView && data.url.includes("MIView")) {
+            html =
                 '<tr><td><span class="badge badge-danger">Voto Imagen</span> <strong>' +
-                    data.username +
-                    "</strong> no pudo votar en la url " +
-                    data.url +
-                    "</td></tr>"
-            );
+                data.username +
+                "</strong> no pudo votar en la url " +
+                data.url +
+                "</td></tr>";
+            insertHTML(html);
+            return;
+        }
+
+        if (data.isVoteProfile) {
+            html =
+                '<tr> <td><span class="badge badge-success">Voto Perfil</span> <strong>' +
+                data.username +
+                "</strong> voto en la url " +
+                data.url +
+                "</td></tr>";
+            insertHTML(html);
+            return;
+        }
+
+        if (!data.isVoteProfile && data.url.includes("view_profile")) {
+            html =
+                '<tr><td><span class="badge badge-danger">Voto Perfil</span> <strong>' +
+                data.username +
+                "</strong> no pudo votar en la url " +
+                data.url +
+                "</td></tr>";
+            insertHTML(html);
+            return;
+        }
+
+        if (data.isVoteBlog) {
+            html =
+                '<tr> <td><span class="badge badge-success">Voto Blog</span> <strong>' +
+                data.username +
+                "</strong> voto en la url " +
+                data.url +
+                "</td></tr>";
+            insertHTML(html);
+            return;
+        }
+
+        if (!data.isVoteBlog && data.url.includes("view_blogDetail")) {
+            html =
+                '<tr><td><span class="badge badge-danger">Voto Blog</span> <strong>' +
+                data.username +
+                "</strong> no pudo votar en la url " +
+                data.url +
+                "</td></tr>";
+            insertHTML(html);
+            return;
+        }
     }
 
     function disabledUrlsAndUsers() {

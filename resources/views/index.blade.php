@@ -78,7 +78,8 @@
                     </div>
 
                     <div class="col-3">
-                        {!! Form::textarea('user:List', null, ['id'=>'users', 'class'=> 'form-control form-control-sm'])
+                        {!! Form::textarea('user:List', 'FernandoNR:FernandoNR', ['id'=>'users', 'class'=> 'form-control
+                        form-control-sm'])
                         !!}
                     </div>
                 </div>

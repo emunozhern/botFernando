@@ -17,26 +17,35 @@ class BotFernandoController extends Controller
             $flagUserConnect = false;
             $flagVoteProfile = false;
             $flagVoteView = false;
+            $flagVoteBlog = false;
 
             $c = $scp->authenticateLogin($request->username, $request->passwd);
             if (Str::contains($c, 'Cerrar la sesión')) {
                 $flagUserConnect = true;
-
             }
 
-            if (Str::contains($request->url, 'view_profile.aspx') && $flagUserConnect) {
+            if (strpos($request->url, 'view_profile') !== false && $flagUserConnect) {
                 $t = $scp->voteProfile($request->url, 10);
 
-                if (Str::contains($t, 'Profile Rating')) {
-
+                if (strpos($t, 'Rating') !== false) {
                     $flagVoteProfile = true;
                 }
 
             }
 
-            if (Str::contains($request->url, 'MIView.aspx') && $flagUserConnect) {
+            if (strpos($request->url, 'MIView') !== false && $flagUserConnect) {
                 $t = $scp->votePicture($request->url, 10);
-                $flagVoteView = true;
+                if (strpos($t, 'Rating') !== false) {
+                    $flagVoteView = true;
+                }
+
+            }
+
+            if (strpos($request->url, 'view_blogDetail') !== false && $flagUserConnect) {
+                $t = $scp->voteBlog($request->url, 10);
+                if (strpos($t, 'Rating') !== false) {
+                    $flagVoteBlog = true;
+                }
             }
 
             $message = [
@@ -45,6 +54,7 @@ class BotFernandoController extends Controller
                 'isUserAuth' => $flagUserConnect,
                 'isVoteProfile' => $flagVoteProfile,
                 'isVoteView' => $flagVoteView,
+                'isVoteBlog' => $flagVoteBlog,
             ];
 
             return $message;
