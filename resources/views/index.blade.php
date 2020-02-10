@@ -12,93 +12,106 @@
 
     <!-- Styles -->
     <style>
-        /* html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            } */
-
-        .title {
-            font-size: 84px;
+        body {
+            background: url(./bg.png);
         }
-
-        /* .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            } */
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="title text-center
-                "> Bot Fernando</h1>
-                <div class="row">
-                    <div class="col-9">
-                        {!! Form::textarea('linkList', null, ['id'=>'urls', 'class'=> 'form-control form-control-sm'])
-                        !!}
-                    </div>
 
-                    <div class="col-3">
-                        {!! Form::textarea('user:List', 'FernandoNR:FernandoNR', ['id'=>'users', 'class'=> 'form-control
+        <img src="{{ asset('logo.png') }}" alt="">
+
+        <div class="row">
+            <div class="col-12 mb-2">
+                <button type="submit" id="voteBlog" class="btn btn-danger">
+                    Votar Blogs
+                    <i class='d-none load fa fa-spinner fa-spin'></i>
+                </button>
+                <button type="submit" id="voteProfile" class="btn btn-danger">
+                    Votar Perfiles
+                    <i class='d-none load fa fa-spinner fa-spin'></i>
+                </button>
+                <button type="submit" id="voteImage" class="btn btn-danger">
+                    Votar Imagenes
+                    <i class='d-none load fa fa-spinner fa-spin'></i>
+                </button>
+
+                <button type="submit" id="createBlog" class="btn btn-danger">
+                    Crear Blogs
+                    <i class='d-none load fa fa-spinner fa-spin'></i>
+                </button>
+
+                <button type="submit" id="destroyBlog" class="btn btn-danger">
+                    Borrar Blogs
+                    <i class='d-none load fa fa-spinner fa-spin'></i>
+                </button>
+            </div>
+
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-12">
+                        {!! Form::textarea('url_blogs',
+                        null, ['id' => 'url_blogs',
+                        'class'=> 'form-control
                         form-control-sm'])
                         !!}
                     </div>
                 </div>
+
+                <div class="row mt-2">
+                    <div class="col-12">
+                        {!! Form::textarea('url_profiles',
+                        null,
+                        ['id'=>'url_profiles', 'class'=> 'form-control
+                        form-control-sm'])
+                        !!}
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12">
+                        {!! Form::textarea('url_images',
+                        null,
+                        ['id'=>'url_images', 'class'=> 'form-control
+                        form-control-sm'])
+                        !!}
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <table class="table text-left">
+                            <tbody id="debugLog">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="col-12 mt-3">
-                {!! Form::submit('Iniciar', ['id'=>'startBot', 'class' => 'btn btn-primary']) !!}
-                {!! Form::submit('Deneter', ['id'=>'stopBot', 'class' => 'btn btn-danger']) !!}
+            <div class="col-3">
+                <ul class="list-group">
+                </ul>
+
+                {!! Form::open([ 'id'=>'accountForm',
+                'class' => 'mt-2 form-inline', 'method' => 'POST',
+                'enctype'=>'multipart/form-data', 'route' =>
+                ['uploadAccountFile']]) !!}
+
+                {!! Form::file('account_files', null, []) !!}
+
+                <button type="submit" class="btn btn-danger mt-2">
+                    Subir Cuentas
+                    <i class='d-none load fa fa-spinner fa-spin'></i>
+                </button>
+                {!! Form::close() !!}
+
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12 mt-3">
-                <table class="table text-left">
-                    <tbody id="debugLog">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        {!! Form::hidden('flagLoading', false, ['id'=>'flagLoading']) !!}
     </div>
 
     <script src="{{ asset('js/app.js') }}"></script>

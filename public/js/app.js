@@ -37078,112 +37078,272 @@ module.exports = function(module) {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("startBot").addEventListener("click", function (e) {
+$(document).ready(function () {
+  $("form").submit(function (e) {
     e.preventDefault();
-    user = document.querySelector("#users").value;
-    user = user.split("\n");
-    urls = document.querySelector("#urls").value;
-    urls = urls.split("\n");
-    disabledUrlsAndUsers();
-    user.forEach(function (uuser) {
-      userSplit = uuser.split(":");
-      console.log(userSplit);
-      username = userSplit[0];
-      passwd = userSplit[1];
-      urls.forEach(function (url) {
-        axios.post("/", {
-          url: url,
-          username: username,
-          passwd: passwd
-        }).then(function (response) {
+    loadingBtn(true);
+    var formData = new FormData($(this)[0]);
+    $.ajax({
+      type: "POST",
+      url: "/load-accounts",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function success(data) {
+        if (data.status) {
+          loadingBtn(false);
+          loginAccounts();
+        }
+
+        if (!data.status) {
+          loadingBtn(false);
+          console.log("Error");
+        }
+      },
+      error: function error(data) {
+        console.error(data);
+      }
+    });
+  });
+  getAccountFile();
+  $("#voteBlog").on("click", function (e) {
+    var flagCount = 0;
+    var urlBlogs = $("#url_blogs").val();
+
+    if (urlBlogs.length == 0) {
+      return;
+    }
+
+    urlBlogs = urlBlogs.split("\n");
+    console.log(urlBlogs);
+    console.log(urlBlogs.length);
+    loadingBtn(true);
+    urlBlogs.forEach(function (url) {
+      console.log(url);
+      axios.post("/votar-blogs", {
+        url: url
+      }).then(function (response) {
+        console.log(response);
+
+        if (response.data.status) {
+          flagCount += 1;
           console.log(response.data);
-          allRw(response.data);
-        })["catch"](function (error) {
-          console.log(error);
-        });
+          printUserHtml(response.data.accounts);
+          printLogHtml(response.data.message);
+        }
+
+        if (!response.data.status) {
+          flagCount += 1;
+        }
+
+        if (urlBlogs.length = flagCount) {
+          loadingBtn(false);
+        }
+      })["catch"](function (error) {
+        console.log(error);
       });
     });
   });
-  document.getElementById("stopBot").addEventListener("click", function (e) {
-    e.preventDefault();
-    enabledUrlsAndUsers();
+  $("#voteProfile").on("click", function (e) {
+    var flagCount = 0;
+    var urlBlogs = $("#url_profiles").val();
+
+    if (urlBlogs.length == 0) {
+      return;
+    }
+
+    urlBlogs = urlBlogs.split("\n");
+    console.log(urlBlogs);
+    console.log(urlBlogs.length);
+    loadingBtn(true);
+    urlBlogs.forEach(function (url) {
+      console.log(url);
+      axios.post("/votar-perfiles", {
+        url: url
+      }).then(function (response) {
+        console.log(response);
+
+        if (response.data.status) {
+          flagCount += 1;
+          console.log(response.data);
+          printUserHtml(response.data.accounts);
+          printLogHtml(response.data.message);
+        }
+
+        if (!response.data.status) {
+          flagCount += 1;
+        }
+
+        if (urlBlogs.length = flagCount) {
+          loadingBtn(false);
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    });
+  });
+  $("#voteImage").on("click", function (e) {
+    var flagCount = 0;
+    var urlBlogs = $("#url_images").val();
+
+    if (urlBlogs.length == 0) {
+      return;
+    }
+
+    urlBlogs = urlBlogs.split("\n");
+    console.log(urlBlogs);
+    console.log(urlBlogs.length);
+    loadingBtn(true);
+    urlBlogs.forEach(function (url) {
+      console.log(url);
+      axios.post("/votar-imagenes", {
+        url: url
+      }).then(function (response) {
+        console.log(response);
+
+        if (response.data.status) {
+          flagCount += 1;
+          console.log(response.data);
+          printUserHtml(response.data.accounts);
+          printLogHtml(response.data.message);
+        }
+
+        if (!response.data.status) {
+          flagCount += 1;
+        }
+
+        if (urlBlogs.length = flagCount) {
+          loadingBtn(false);
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    });
+  });
+  $("#createBlog").on("click", function (e) {
+    loadingBtn(true);
+    axios.post("/crear-blog").then(function (response) {
+      console.log(response);
+
+      if (response.data.status) {
+        console.log(response.data);
+        loadingBtn(false);
+        printUserHtml(response.data.accounts);
+        printLogHtml(response.data.message);
+      }
+    })["catch"](function (error) {
+      console.log(error);
+    });
+  });
+  $("#destroyBlog").on("click", function (e) {
+    loadingBtn(true);
+    axios.post("/eliminar-blog").then(function (response) {
+      console.log(response);
+
+      if (response.data.status) {
+        console.log(response.data);
+        loadingBtn(false);
+        printUserHtml(response.data.accounts);
+        printLogHtml(response.data.message);
+      }
+    })["catch"](function (error) {
+      console.log(error);
+    });
   });
 
-  function insertHTML(html) {
-    document.querySelector("#debugLog").insertAdjacentHTML("afterend", html);
+  function getAccountFile() {
+    loginAccounts();
   }
 
-  function allRw(data) {
-    if (data.isUserAuth && !data.isVoteView && !data.isVoteProfile && !data.isCreatedBlog && !data.isDeletedBlog && !data.isVoteBlog) {
-      html = '<tr> <td><span class="badge badge-success">Conectado</span> <strong>' + data.username + "</strong> inicio sesion con exito</td></tr>";
-      insertHTML(html);
-      return;
+  function loginAccounts() {
+    loadingBtn(true);
+    axios.get("/login-accounts").then(function (response) {
+      if (response.data.status) {
+        console.log(response.data);
+        loadingBtn(false);
+        printUserHtml(response.data.accounts);
+      }
+
+      if (!response.data.status) {
+        loadingBtn(false);
+        console.log("Error");
+      }
+    })["catch"](function (error) {
+      console.log(error);
+    });
+  }
+
+  function loadingBtn(flag) {
+    if (flag) {
+      $(".load").removeClass("d-none");
+    } else {
+      $(".load").addClass("d-none");
     }
+  }
 
-    if (!data.isUserAuth && !data.isVoteView && !data.isVoteProfile && !data.isCreatedBlog && !data.isDeletedBlog && !data.isVoteBlog) {
-      html = '<tr><td><span class="badge badge-danger">Conectado</span> <strong>' + data.username + "</strong> no pudo iniciar sesion</td></tr>";
-      insertHTML(html);
-      return;
-    }
+  function printUserHtml() {
+    var users = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    $(".list-group").html("");
 
-    if (data.isCreatedBlog) {
-      html = '<tr> <td><span class="badge badge-success">Crear Blog</span> <strong>' + data.username + "</strong> se ha creado un blog exito</td></tr>";
-      insertHTML(html);
+    _.forEach(users, function (user, i) {
+      console.log(user);
+      console.log(i);
+      $(".list-group").append('<li id="' + i + '" class="list-group-item">' + i + ' <span class="badge badge-primary">' + user.point + "</span></li>");
+    });
+  }
 
-      if (data.isDeletedBlog) {
-        html = '<tr> <td><span class="badge badge-success">Borrado Blog</span> <strong>' + data.username + "</strong> se han eliminado todas las entradas</td></tr>";
-        insertHTML(html);
-        return;
+  function printLogHtml(html) {
+    if (html) {
+      if (_.isArray(html)) {
+        _.forEach(html, function (el) {
+          $("#debugLog").append(el);
+        });
+      } else {
+        $("#debugLog").append(html);
       }
     }
+  } // function allRw(data) {
+  //     if (
+  //         !data.isUserAuth &&
+  //         !data.isVoteView &&
+  //         !data.isVoteProfile &&
+  //         !data.isCreatedBlog &&
+  //         !data.isDeletedBlog &&
+  //         !data.isVoteBlog
+  //     ) {
+  //         html =
+  //             '<tr><td><span class="badge badge-danger">Conectado</span> <strong>' +
+  //             data.username +
+  //             "</strong> no pudo iniciar sesion</td></tr>";
+  //         insertHTML(html);
+  //         return;
+  //     }
+  //     if (data.isCreatedBlog) {
+  //         html =
+  //             '<tr> <td><span class="badge badge-success">Crear Blog</span> <strong>' +
+  //             data.username +
+  //             "</strong> se ha creado un blog exito</td></tr>";
+  //         insertHTML(html);
+  //         if (data.isDeletedBlog) {
+  //             html =
+  //                 '<tr> <td><span class="badge badge-success">Borrado Blog</span> <strong>' +
+  //                 data.username +
+  //                 "</strong> se han eliminado todas las entradas</td></tr>";
+  //             insertHTML(html);
+  //             return;
+  //         }
+  //     }
+  // function disabledUrlsAndUsers() {
+  //     document.querySelector("#urls").setAttribute("disabled", "disabled");
+  //     document.querySelector("#users").setAttribute("disabled", "disabled");
+  // }
+  // function enabledUrlsAndUsers() {
+  //     document.querySelector("#urls").removeAttribute("disabled", "disabled");
+  //     document
+  //         .querySelector("#users")
+  //         .removeAttribute("disabled", "disabled");
+  // }
 
-    if (data.isVoteView) {
-      html = '<tr> <td><span class="badge badge-success">Voto Imagen</span> <strong>' + data.username + "</strong> voto en la url " + data.url + "</td></tr>";
-      insertHTML(html);
-      return;
-    }
-
-    if (!data.isVoteView && data.url.includes("MIView")) {
-      html = '<tr><td><span class="badge badge-danger">Voto Imagen</span> <strong>' + data.username + "</strong> no pudo votar en la url " + data.url + "</td></tr>";
-      insertHTML(html);
-      return;
-    }
-
-    if (data.isVoteProfile) {
-      html = '<tr> <td><span class="badge badge-success">Voto Perfil</span> <strong>' + data.username + "</strong> voto en la url " + data.url + "</td></tr>";
-      insertHTML(html);
-      return;
-    }
-
-    if (!data.isVoteProfile && data.url.includes("view_profile")) {
-      html = '<tr><td><span class="badge badge-danger">Voto Perfil</span> <strong>' + data.username + "</strong> no pudo votar en la url " + data.url + "</td></tr>";
-      insertHTML(html);
-      return;
-    }
-
-    if (data.isVoteBlog) {
-      html = '<tr> <td><span class="badge badge-success">Voto Blog</span> <strong>' + data.username + "</strong> voto en la url " + data.url + "</td></tr>";
-      insertHTML(html);
-      return;
-    }
-
-    if (!data.isVoteBlog && data.url.includes("view_blogDetail")) {
-      html = '<tr><td><span class="badge badge-danger">Voto Blog</span> <strong>' + data.username + "</strong> no pudo votar en la url " + data.url + "</td></tr>";
-      insertHTML(html);
-      return;
-    }
-  }
-
-  function disabledUrlsAndUsers() {
-    document.querySelector("#urls").setAttribute("disabled", "disabled");
-    document.querySelector("#users").setAttribute("disabled", "disabled");
-  }
-
-  function enabledUrlsAndUsers() {
-    document.querySelector("#urls").removeAttribute("disabled", "disabled");
-    document.querySelector("#users").removeAttribute("disabled", "disabled");
-  }
 });
 
 /***/ }),
